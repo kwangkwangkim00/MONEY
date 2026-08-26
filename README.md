@@ -28,7 +28,7 @@ npm test
 
 1. 이 저장소를 GitHub에 올린다.
 2. Render 대시보드에서 "New Web Service" → 저장소 연결.
-3. Instance Type을 **Starter 이상 유료 플랜**으로 선택한다 (Free 플랜은 4번의
+3. Instance Type을 **Starter 이상 유료 플랜**으로 선택한다 (Free 플랜은 5번의
    영구 디스크를 추가할 수 없다).
 4. Build Command: `npm install`, Start Command: `npm start`.
 5. **Disk** 탭에서 영구 디스크를 추가하고 마운트 경로를 예: `/data`로 지정한다.
