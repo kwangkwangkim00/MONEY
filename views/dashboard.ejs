@@ -19,7 +19,7 @@
     <div class="total-row">
       <div class="stamp">
         <span class="stamp-label">총액</span>
-        <span class="stamp-amount tabular"><%= total.toLocaleString() %>원</span>
+        <span class="stamp-amount tabular" data-count="<%= total %>"><%= total.toLocaleString() %>원</span>
       </div>
       <div class="by-source">
         <p class="eyebrow">출처별</p>
@@ -30,7 +30,7 @@
           <div class="ledger-row">
             <span class="name"><%= name %></span>
             <span class="fill"></span>
-            <span class="amount tabular"><%= amount.toLocaleString() %>원</span>
+            <span class="amount tabular" data-count="<%= amount %>"><%= amount.toLocaleString() %>원</span>
           </div>
         <% }) %>
       </div>
@@ -71,7 +71,7 @@
   <% } %>
 </main>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
 <script>
   const recent = <%- JSON.stringify(recent) %>;
   const canvas = document.getElementById('trend');
@@ -96,6 +96,30 @@
         },
       },
     });
+  }
+</script>
+<script type="module">
+  // 총액이 실제로 "세어지는" 느낌을 주는 카운트업 — 숫자 자체를 애니메이션하는 건
+  // CSS로는 안 되기 때문에 motion.dev를 씀. 실패해도 이미 최종 숫자가 그려져 있어
+  // 화면이 깨지지 않음 (progressive enhancement).
+  try {
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const { animate } = await import('https://cdn.jsdelivr.net/npm/motion@13.1.1/+esm');
+      document.querySelectorAll('[data-count]').forEach((el, i) => {
+        const target = Number(el.dataset.count);
+        const suffix = el.textContent.replace(/[\d,]/g, '');
+        animate(0, target, {
+          duration: 0.7,
+          delay: i === 0 ? 0.15 : 0.25 + i * 0.05,
+          ease: 'circOut',
+          onUpdate: (latest) => {
+            el.textContent = Math.round(latest).toLocaleString() + suffix;
+          },
+        });
+      });
+    }
+  } catch (e) {
+    // motion.dev 로드 실패해도 서버가 그려준 최종 값이 이미 표시돼 있음
   }
 </script>
 </body>
