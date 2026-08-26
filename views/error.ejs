@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<%- include('partials/head', { title: '문제 발생' }) %>
+</head>
+<body>
+<%- include('partials/nav', { active: 'import' }) %>
+
+<main>
+  <h1 class="page-title">저장하지 못했어요</h1>
+
+  <section class="sheet">
+    <p class="result-summary"><%= message %></p>
+  </section>
+
+  <p class="links">
+    <a href="/import">다시 붙여넣기</a>
+    <a href="/">대시보드로</a>
+  </p>
+</main>
+</body>
+</html>

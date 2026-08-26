@@ -52,7 +52,7 @@ app.post('/import/preview', (req, res) => {
   }
   const source = listSources(db).find(s => s.id === resolvedSourceId);
   if (!source) {
-    return res.status(400).send('출처를 선택하거나 새로 추가해주세요.');
+    return res.status(400).render('error', { message: '출처를 선택하거나 새로 추가해주세요.' });
   }
   const grid = parseGrid(pastedText);
   const savedMapping = source && source.column_mapping ? JSON.parse(source.column_mapping) : null;
@@ -70,7 +70,7 @@ app.post('/import/preview', (req, res) => {
 app.post('/import/save', (req, res) => {
   const sourceId = Number(req.body.sourceId);
   if (!listSources(db).find(s => s.id === sourceId)) {
-    return res.status(400).send('출처를 선택하거나 새로 추가해주세요.');
+    return res.status(400).render('error', { message: '출처를 선택하거나 새로 추가해주세요.' });
   }
   const hasHeader = req.body.hasHeader === 'on';
   const pastedText = req.body.pastedText;
@@ -80,6 +80,12 @@ app.post('/import/save', (req, res) => {
   while (req.body[`col${i}`] !== undefined) {
     mapping.push(req.body[`col${i}`]);
     i++;
+  }
+
+  if (!mapping.includes('date') || !mapping.includes('amount')) {
+    return res.status(400).render('error', {
+      message: '열 지정에서 "날짜"와 "금액"을 각각 하나씩 선택해야 저장할 수 있어요. 뒤로 가서 다시 지정해주세요.',
+    });
   }
 
   const grid = parseGrid(pastedText);
