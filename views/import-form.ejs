@@ -52,5 +52,12 @@
     </div>
   </form>
 </main>
+<script>
+  document.querySelector('form').addEventListener('submit', function (e) {
+    const btn = e.target.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    btn.textContent = '불러오는 중…';
+  });
+</script>
 </body>
 </html>

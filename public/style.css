@@ -113,10 +113,19 @@ h1.page-title {
   box-shadow: 0 1px 3px var(--shadow);
   padding: 1.5rem;
   margin-bottom: 1.5rem;
+  animation: sheet-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .sheet + .sheet {
   margin-top: 1.5rem;
+}
+
+.sheet:nth-of-type(2) { animation-delay: 60ms; }
+.sheet:nth-of-type(3) { animation-delay: 120ms; }
+
+@keyframes sheet-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .eyebrow {
@@ -140,6 +149,7 @@ h1.page-title {
 input[type='month'] {
   font-family: inherit;
   font-size: 0.95rem;
+  min-height: 44px;
   color: var(--ink);
   background: var(--card);
   border: 1px solid var(--rule);
@@ -167,8 +177,15 @@ input[type='month'] {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  transform: rotate(-4deg);
   background: var(--stamp-soft);
+  animation: stamp-press 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation-delay: 80ms;
+}
+
+@keyframes stamp-press {
+  0% { opacity: 0; transform: rotate(-4deg) scale(1.4); }
+  60% { opacity: 1; transform: rotate(-4deg) scale(0.94); }
+  100% { opacity: 1; transform: rotate(-4deg) scale(1); }
 }
 
 .stamp .stamp-label {
@@ -281,6 +298,7 @@ table.ledger th.amount {
 .field select,
 .field input[type='text'] {
   width: 100%;
+  min-height: 44px;
   font-family: inherit;
   font-size: 0.95rem;
   color: var(--ink);
@@ -322,9 +340,15 @@ fieldset .field:last-child {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  min-height: 44px;
   font-size: 0.9rem;
   color: var(--ink-soft);
   margin-bottom: 1rem;
+}
+
+.checkbox-row input[type='checkbox'] {
+  width: 20px;
+  height: 20px;
 }
 
 textarea {
@@ -356,19 +380,28 @@ button,
   background: var(--ink);
   border: none;
   border-radius: var(--radius);
+  min-height: 44px;
   padding: 0.6rem 1.4rem;
   cursor: pointer;
-  transition: background 0.15s ease, transform 0.1s ease;
+  transition: background 0.15s ease, transform 0.15s ease;
 }
 
 button:hover,
 .btn:hover {
   background: var(--stamp);
+  transform: translateY(-1px);
 }
 
 button:active,
 .btn:active {
   transform: translateY(1px);
+}
+
+button:disabled,
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+  transform: none;
 }
 
 button:focus-visible,
@@ -456,5 +489,6 @@ ul.skip-list li {
 @media (prefers-reduced-motion: reduce) {
   * {
     transition: none !important;
+    animation: none !important;
   }
 }
