@@ -1,17 +1,34 @@
 <!DOCTYPE html>
 <html lang="ko">
-<head><meta charset="UTF-8"><title>저장 결과</title></head>
+<head>
+<%- include('partials/head', { title: '저장 결과' }) %>
+</head>
 <body>
-  <h1>저장 완료</h1>
-  <p><%= inserted %>건 저장, <%= duplicates %>건 중복 제외</p>
-  <% if (errors.length) { %>
-    <h2>건너뛴 행 (<%= errors.length %>)</h2>
-    <ul>
-      <% errors.forEach(e => { %>
-        <li><%= e.reason %>: <%= JSON.stringify(e.raw) %></li>
-      <% }) %>
-    </ul>
-  <% } %>
-  <p><a href="/">대시보드로</a> | <a href="/import">더 붙여넣기</a></p>
+<%- include('partials/nav', { active: 'import' }) %>
+
+<main>
+  <h1 class="page-title">저장 완료</h1>
+
+  <section class="sheet">
+    <p class="result-summary">
+      <span class="n"><%= inserted %></span>건 저장,
+      <span class="n <%= duplicates > 0 ? 'stamp-ink' : '' %>"><%= duplicates %></span>건 중복 제외
+    </p>
+
+    <% if (errors.length) { %>
+      <p class="eyebrow">건너뛴 행 (<%= errors.length %>)</p>
+      <ul class="skip-list">
+        <% errors.forEach(e => { %>
+          <li><%= e.reason %>: <%= JSON.stringify(e.raw) %></li>
+        <% }) %>
+      </ul>
+    <% } %>
+  </section>
+
+  <p class="links">
+    <a href="/">대시보드로</a>
+    <a href="/import">더 붙여넣기</a>
+  </p>
+</main>
 </body>
 </html>

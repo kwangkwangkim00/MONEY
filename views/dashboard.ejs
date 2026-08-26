@@ -1,43 +1,102 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <title>우리집 재무관리</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<%- include('partials/head', { title: '대시보드' }) %>
 </head>
 <body>
-  <nav><a href="/">대시보드</a> | <a href="/import">거래내역 붙여넣기</a></nav>
-  <h1><%= month %> 요약</h1>
-  <form method="get">
-    <input type="month" name="month" value="<%= month %>" onchange="this.form.submit()">
-  </form>
-  <p>총액: <%= total.toLocaleString() %>원</p>
-  <ul>
-    <% bySource.forEach(([name, amount]) => { %>
-      <li><%= name %>: <%= amount.toLocaleString() %>원</li>
-    <% }) %>
-  </ul>
-  <table border="1" cellpadding="4">
-    <tr><th>날짜</th><th>출처</th><th>내용</th><th>금액</th></tr>
-    <% transactions.forEach(t => { %>
-      <tr>
-        <td><%= t.date %></td>
-        <td><%= t.source_name %></td>
-        <td><%= t.description %></td>
-        <td><%= t.amount.toLocaleString() %></td>
-      </tr>
-    <% }) %>
-  </table>
-  <canvas id="trend" width="400" height="150"></canvas>
-  <script>
-    const recent = <%- JSON.stringify(recent) %>;
-    new Chart(document.getElementById('trend'), {
+<%- include('partials/nav', { active: 'dashboard' }) %>
+
+<main>
+  <h1 class="page-title"><%= month %> 요약</h1>
+
+  <div class="month-row">
+    <form method="get">
+      <input type="month" name="month" value="<%= month %>" onchange="this.form.submit()">
+    </form>
+  </div>
+
+  <section class="sheet">
+    <div class="total-row">
+      <div class="stamp">
+        <span class="stamp-label">총액</span>
+        <span class="stamp-amount tabular"><%= total.toLocaleString() %>원</span>
+      </div>
+      <div class="by-source">
+        <p class="eyebrow">출처별</p>
+        <% if (bySource.length === 0) { %>
+          <p class="empty-note">이번 달 거래내역이 없어요.</p>
+        <% } %>
+        <% bySource.forEach(([name, amount]) => { %>
+          <div class="ledger-row">
+            <span class="name"><%= name %></span>
+            <span class="fill"></span>
+            <span class="amount tabular"><%= amount.toLocaleString() %>원</span>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+  </section>
+
+  <section class="sheet">
+    <p class="eyebrow">거래내역</p>
+    <% if (transactions.length === 0) { %>
+      <p class="empty-note">
+        아직 이번 달 거래내역이 없어요.
+        <a href="/import">거래내역을 붙여넣어</a> 시작해보세요.
+      </p>
+    <% } else { %>
+      <div class="table-scroll">
+        <table class="ledger">
+          <tr><th>날짜</th><th>출처</th><th>내용</th><th class="amount">금액</th></tr>
+          <% transactions.forEach(t => { %>
+            <tr>
+              <td class="tabular"><%= t.date %></td>
+              <td><%= t.source_name %></td>
+              <td><%= t.description %></td>
+              <td class="amount tabular"><%= t.amount.toLocaleString() %></td>
+            </tr>
+          <% }) %>
+        </table>
+      </div>
+    <% } %>
+  </section>
+
+  <% if (recent.length > 0) { %>
+    <section class="sheet">
+      <p class="eyebrow">최근 추이</p>
+      <div class="chart-wrap">
+        <canvas id="trend" height="90"></canvas>
+      </div>
+    </section>
+  <% } %>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const recent = <%- JSON.stringify(recent) %>;
+  const canvas = document.getElementById('trend');
+  if (canvas) {
+    new Chart(canvas, {
       type: 'bar',
       data: {
         labels: recent.map(r => r.month),
-        datasets: [{ label: '월별 총액', data: recent.map(r => r.total) }],
+        datasets: [{
+          label: '월별 총액',
+          data: recent.map(r => r.total),
+          backgroundColor: '#b23a2e',
+          borderRadius: 3,
+          maxBarThickness: 40,
+        }],
+      },
+      options: {
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { ticks: { color: '#55665b' }, grid: { color: '#d7e2cf' } },
+          x: { ticks: { color: '#55665b' }, grid: { display: false } },
+        },
       },
     });
-  </script>
+  }
+</script>
 </body>
 </html>

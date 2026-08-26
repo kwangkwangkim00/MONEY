@@ -1,0 +1,460 @@
+/* 우리집 재무관리 — 회계장부(가계부/통장) 컨셉 디자인 */
+
+:root {
+  --paper: #f1f5ee;
+  --paper-line: #d7e2cf;
+  --card: #fbfcf9;
+  --rule: #c9d6c2;
+  --ink: #1e2a22;
+  --ink-soft: #55665b;
+  --ink-faint: #8a9a8f;
+  --stamp: #b23a2e;
+  --stamp-soft: rgba(178, 58, 46, 0.1);
+  --shadow: rgba(30, 42, 34, 0.1);
+  --radius: 3px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: var(--paper);
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 35px,
+    var(--paper-line) 36px
+  );
+  color: var(--ink);
+  font-family: 'IBM Plex Sans KR', 'Noto Sans KR', sans-serif;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+.tabular {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- header ---------- */
+
+header.masthead {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 0.9rem 1.25rem;
+}
+
+header.masthead .masthead-inner {
+  max-width: 880px;
+  margin: 0 auto;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+}
+
+header.masthead .brand {
+  font-family: 'Noto Serif KR', serif;
+  font-weight: 800;
+  font-size: 1.15rem;
+  letter-spacing: 0.01em;
+  color: var(--paper);
+  text-decoration: none;
+}
+
+header.masthead nav {
+  display: flex;
+  gap: 1.25rem;
+  font-size: 0.92rem;
+}
+
+header.masthead nav a {
+  color: var(--paper);
+  opacity: 0.75;
+  text-decoration: none;
+  padding-bottom: 2px;
+  border-bottom: 2px solid transparent;
+  transition: opacity 0.15s ease, border-color 0.15s ease;
+}
+
+header.masthead nav a:hover,
+header.masthead nav a.active {
+  opacity: 1;
+  border-bottom-color: var(--stamp);
+}
+
+/* ---------- layout ---------- */
+
+main {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+}
+
+h1.page-title {
+  font-family: 'Noto Serif KR', serif;
+  font-weight: 700;
+  font-size: 1.6rem;
+  margin: 0 0 1.25rem;
+  color: var(--ink);
+}
+
+.sheet {
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  box-shadow: 0 1px 3px var(--shadow);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.sheet + .sheet {
+  margin-top: 1.5rem;
+}
+
+.eyebrow {
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  margin: 0 0 0.35rem;
+}
+
+/* ---------- month picker ---------- */
+
+.month-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+input[type='month'] {
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--ink);
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  padding: 0.4rem 0.6rem;
+}
+
+/* ---------- total stamp ---------- */
+
+.total-row {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.stamp {
+  flex: 0 0 auto;
+  width: 148px;
+  height: 148px;
+  border-radius: 50%;
+  border: 3px double var(--stamp);
+  color: var(--stamp);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transform: rotate(-4deg);
+  background: var(--stamp-soft);
+}
+
+.stamp .stamp-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  margin-bottom: 0.15rem;
+}
+
+.stamp .stamp-amount {
+  font-weight: 600;
+  font-size: 1.15rem;
+  text-align: center;
+  line-height: 1.25;
+  padding: 0 0.5rem;
+}
+
+.by-source {
+  flex: 1 1 220px;
+  min-width: 220px;
+}
+
+.ledger-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  padding: 0.3rem 0;
+}
+
+.ledger-row .name {
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+
+.ledger-row .fill {
+  flex: 1;
+  border-bottom: 1px dotted var(--ink-faint);
+  transform: translateY(-4px);
+}
+
+.ledger-row .amount {
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+/* ---------- table ---------- */
+
+.table-scroll {
+  overflow-x: auto;
+}
+
+table.ledger {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+table.ledger th {
+  text-align: left;
+  font-weight: 500;
+  color: var(--ink-faint);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--rule);
+  padding: 0.5rem 0.6rem;
+  white-space: nowrap;
+}
+
+table.ledger td {
+  border-bottom: 1px solid var(--paper-line);
+  padding: 0.55rem 0.6rem;
+  vertical-align: top;
+}
+
+table.ledger tbody tr:hover {
+  background: var(--stamp-soft);
+}
+
+table.ledger td.amount,
+table.ledger th.amount {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.empty-note {
+  color: var(--ink-faint);
+  font-size: 0.9rem;
+  padding: 0.75rem 0;
+}
+
+/* ---------- chart ---------- */
+
+.chart-wrap {
+  margin-top: 1.5rem;
+}
+
+/* ---------- forms ---------- */
+
+.field {
+  margin-bottom: 1.1rem;
+}
+
+.field label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+  margin-bottom: 0.35rem;
+}
+
+.field select,
+.field input[type='text'] {
+  width: 100%;
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--ink);
+  background: var(--card);
+  border: none;
+  border-bottom: 1px solid var(--rule);
+  padding: 0.45rem 0.1rem;
+}
+
+.field select:focus,
+.field input[type='text']:focus,
+textarea:focus {
+  outline: 2px solid var(--stamp);
+  outline-offset: 2px;
+}
+
+fieldset {
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  padding: 0.9rem 1rem 1rem;
+  margin: 0 0 1.1rem;
+}
+
+fieldset legend {
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  padding: 0 0.4rem;
+}
+
+fieldset .field {
+  margin-bottom: 0.7rem;
+}
+
+fieldset .field:last-child {
+  margin-bottom: 0;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+  margin-bottom: 1rem;
+}
+
+textarea {
+  width: 100%;
+  min-height: 260px;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 0.85rem;
+  color: var(--ink);
+  background: var(--card);
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 21px,
+    var(--paper-line) 22px
+  );
+  line-height: 22px;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  padding: 0.6rem 0.75rem;
+  resize: vertical;
+}
+
+button,
+.btn {
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--paper);
+  background: var(--ink);
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.6rem 1.4rem;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+button:hover,
+.btn:hover {
+  background: var(--stamp);
+}
+
+button:active,
+.btn:active {
+  transform: translateY(1px);
+}
+
+button:focus-visible,
+.btn:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--stamp);
+  outline-offset: 2px;
+}
+
+.actions {
+  margin-top: 1.25rem;
+}
+
+/* ---------- mapping select in preview table ---------- */
+
+table.ledger select {
+  font-family: inherit;
+  font-size: 0.82rem;
+  color: var(--ink);
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  padding: 0.2rem 0.3rem;
+}
+
+/* ---------- result page ---------- */
+
+.result-summary {
+  font-size: 1.05rem;
+}
+
+.result-summary .n {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-weight: 600;
+}
+
+.result-summary .n.stamp-ink {
+  color: var(--stamp);
+}
+
+ul.skip-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+ul.skip-list li {
+  padding: 0.4rem 0;
+  border-bottom: 1px solid var(--paper-line);
+  font-size: 0.88rem;
+  color: var(--ink-soft);
+}
+
+.links {
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 1.25rem;
+}
+
+.links a {
+  color: var(--stamp);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.links a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 560px) {
+  .stamp {
+    width: 120px;
+    height: 120px;
+  }
+
+  h1.page-title {
+    font-size: 1.35rem;
+  }
+
+  .sheet {
+    padding: 1.1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}

@@ -10,6 +10,7 @@ const { parseGrid, applyMapping } = require('./lib/parser');
 const db = openDb(process.env.DB_PATH || path.join(__dirname, 'data.db'));
 const app = express();
 app.set('view engine', 'ejs');
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true, limit: '5mb' }));
 
 function currentYearMonth() {

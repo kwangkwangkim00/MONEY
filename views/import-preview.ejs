@@ -1,29 +1,45 @@
 <!DOCTYPE html>
 <html lang="ko">
-<head><meta charset="UTF-8"><title>붙여넣기 미리보기</title></head>
+<head>
+<%- include('partials/head', { title: '붙여넣기 미리보기' }) %>
+</head>
 <body>
-  <h1>미리보기 (상위 <%= grid.length %>행)</h1>
+<%- include('partials/nav', { active: 'import' }) %>
+
+<main>
+  <h1 class="page-title">미리보기</h1>
+  <p class="empty-note">상위 <%= grid.length %>행. 각 열이 무엇을 뜻하는지 지정해주세요.</p>
+
   <form method="post" action="/import/save">
     <input type="hidden" name="sourceId" value="<%= sourceId %>">
     <input type="hidden" name="pastedText" value="<%= pastedText %>">
     <% if (hasHeader) { %><input type="hidden" name="hasHeader" value="on"><% } %>
-    <table border="1" cellpadding="4">
-      <tr>
-        <% for (let c = 0; c < columnCount; c++) { %>
-          <th>
-            <select name="col<%= c %>">
-              <% ['ignore','date','description','amount'].forEach(role => { %>
-                <option value="<%= role %>" <%= (savedMapping && savedMapping[c] === role) ? 'selected' : '' %>><%= role %></option>
-              <% }) %>
-            </select>
-          </th>
-        <% } %>
-      </tr>
-      <% grid.forEach(row => { %>
-        <tr><% row.forEach(cell => { %><td><%= cell %></td><% }) %></tr>
-      <% }) %>
-    </table>
-    <button type="submit">저장</button>
+
+    <section class="sheet">
+      <div class="table-scroll">
+        <table class="ledger">
+          <tr>
+            <% for (let c = 0; c < columnCount; c++) { %>
+              <th>
+                <select name="col<%= c %>">
+                  <% ['ignore','date','description','amount'].forEach(role => { %>
+                    <option value="<%= role %>" <%= (savedMapping && savedMapping[c] === role) ? 'selected' : '' %>><%= role %></option>
+                  <% }) %>
+                </select>
+              </th>
+            <% } %>
+          </tr>
+          <% grid.forEach(row => { %>
+            <tr><% row.forEach(cell => { %><td><%= cell %></td><% }) %></tr>
+          <% }) %>
+        </table>
+      </div>
+    </section>
+
+    <div class="actions">
+      <button type="submit">저장</button>
+    </div>
   </form>
+</main>
 </body>
 </html>
