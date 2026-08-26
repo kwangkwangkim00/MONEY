@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head><meta charset="UTF-8"><title>붙여넣기 미리보기</title></head>
+<body>
+  <h1>미리보기 (상위 <%= grid.length %>행)</h1>
+  <form method="post" action="/import/save">
+    <input type="hidden" name="sourceId" value="<%= sourceId %>">
+    <input type="hidden" name="pastedText" value="<%= pastedText %>">
+    <% if (hasHeader) { %><input type="hidden" name="hasHeader" value="on"><% } %>
+    <table border="1" cellpadding="4">
+      <tr>
+        <% for (let c = 0; c < columnCount; c++) { %>
+          <th>
+            <select name="col<%= c %>">
+              <% ['ignore','date','description','amount'].forEach(role => { %>
+                <option value="<%= role %>" <%= (savedMapping && savedMapping[c] === role) ? 'selected' : '' %>><%= role %></option>
+              <% }) %>
+            </select>
+          </th>
+        <% } %>
+      </tr>
+      <% grid.forEach(row => { %>
+        <tr><% row.forEach(cell => { %><td><%= cell %></td><% }) %></tr>
+      <% }) %>
+    </table>
+    <button type="submit">저장</button>
+  </form>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head><meta charset="UTF-8"><title>거래내역 붙여넣기</title></head>
+<body>
+  <nav><a href="/">대시보드</a> | <a href="/import">거래내역 붙여넣기</a></nav>
+  <h1>거래내역 붙여넣기</h1>
+  <form method="post" action="/import/preview">
+    <label>출처
+      <select name="sourceId">
+        <option value="">-- 새 출처 --</option>
+        <% sources.forEach(s => { %>
+          <option value="<%= s.id %>"><%= s.name %></option>
+        <% }) %>
+      </select>
+    </label>
+    <fieldset>
+      <legend>새 출처 (기존 출처를 선택했다면 비워두세요)</legend>
+      <input type="text" name="newSourceName" placeholder="예: 국민카드">
+      <select name="newSourceType">
+        <option value="card">카드</option>
+        <option value="account">계좌</option>
+      </select>
+    </fieldset>
+    <label><input type="checkbox" name="hasHeader" checked> 첫 줄은 헤더</label><br>
+    <textarea name="pastedText" rows="15" cols="80" placeholder="엑셀에서 복사한 내용을 붙여넣으세요"></textarea><br>
+    <button type="submit">미리보기</button>
+  </form>
+</body>
+</html>

@@ -1,7 +1,11 @@
 const express = require('express');
 const path = require('path');
-const { openDb, getTransactionsForMonth, getAllTransactions } = require('./db');
+const {
+  openDb, getTransactionsForMonth, getAllTransactions,
+  listSources, createSource, saveColumnMapping, insertTransactions,
+} = require('./db');
 const { recentMonthTotals } = require('./lib/aggregate');
+const { parseGrid, applyMapping } = require('./lib/parser');
 
 const db = openDb(process.env.DB_PATH || path.join(__dirname, 'data.db'));
 const app = express();
@@ -32,6 +36,50 @@ app.get('/', (req, res) => {
     bySource: [...bySourceMap.entries()],
     recent,
   });
+});
+
+app.get('/import', (req, res) => {
+  res.render('import-form', { sources: listSources(db) });
+});
+
+app.post('/import/preview', (req, res) => {
+  const { sourceId, newSourceName, newSourceType, pastedText, hasHeader } = req.body;
+  let resolvedSourceId = Number(sourceId);
+  if (!resolvedSourceId && newSourceName) {
+    resolvedSourceId = createSource(db, newSourceName, newSourceType || 'card');
+  }
+  const source = listSources(db).find(s => s.id === resolvedSourceId);
+  const grid = parseGrid(pastedText);
+  const savedMapping = source && source.column_mapping ? JSON.parse(source.column_mapping) : null;
+
+  res.render('import-preview', {
+    sourceId: resolvedSourceId,
+    pastedText,
+    hasHeader: hasHeader === 'on',
+    grid: grid.slice(0, 20),
+    columnCount: grid[0] ? grid[0].length : 0,
+    savedMapping,
+  });
+});
+
+app.post('/import/save', (req, res) => {
+  const sourceId = Number(req.body.sourceId);
+  const hasHeader = req.body.hasHeader === 'on';
+  const pastedText = req.body.pastedText;
+
+  const mapping = [];
+  let i = 0;
+  while (req.body[`col${i}`] !== undefined) {
+    mapping.push(req.body[`col${i}`]);
+    i++;
+  }
+
+  const grid = parseGrid(pastedText);
+  const { rows, errors } = applyMapping(grid, mapping, sourceId, hasHeader);
+  const { inserted, duplicates } = insertTransactions(db, sourceId, rows);
+  saveColumnMapping(db, sourceId, mapping);
+
+  res.render('import-result', { inserted, duplicates, errors });
 });
 
 if (require.main === module) {
