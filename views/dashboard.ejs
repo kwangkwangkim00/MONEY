@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>우리집 재무관리</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <nav><a href="/">대시보드</a> | <a href="/import">거래내역 붙여넣기</a></nav>
+  <h1><%= month %> 요약</h1>
+  <form method="get">
+    <input type="month" name="month" value="<%= month %>" onchange="this.form.submit()">
+  </form>
+  <p>총액: <%= total.toLocaleString() %>원</p>
+  <ul>
+    <% bySource.forEach(([name, amount]) => { %>
+      <li><%= name %>: <%= amount.toLocaleString() %>원</li>
+    <% }) %>
+  </ul>
+  <table border="1" cellpadding="4">
+    <tr><th>날짜</th><th>출처</th><th>내용</th><th>금액</th></tr>
+    <% transactions.forEach(t => { %>
+      <tr>
+        <td><%= t.date %></td>
+        <td><%= t.source_name %></td>
+        <td><%= t.description %></td>
+        <td><%= t.amount.toLocaleString() %></td>
+      </tr>
+    <% }) %>
+  </table>
+  <canvas id="trend" width="400" height="150"></canvas>
+  <script>
+    const recent = <%- JSON.stringify(recent) %>;
+    new Chart(document.getElementById('trend'), {
+      type: 'bar',
+      data: {
+        labels: recent.map(r => r.month),
+        datasets: [{ label: '월별 총액', data: recent.map(r => r.total) }],
+      },
+    });
+  </script>
+</body>
+</html>
