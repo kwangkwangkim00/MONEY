@@ -49,6 +49,9 @@ app.post('/import/preview', (req, res) => {
     resolvedSourceId = createSource(db, newSourceName, newSourceType || 'card');
   }
   const source = listSources(db).find(s => s.id === resolvedSourceId);
+  if (!source) {
+    return res.status(400).send('출처를 선택하거나 새로 추가해주세요.');
+  }
   const grid = parseGrid(pastedText);
   const savedMapping = source && source.column_mapping ? JSON.parse(source.column_mapping) : null;
 
@@ -64,6 +67,9 @@ app.post('/import/preview', (req, res) => {
 
 app.post('/import/save', (req, res) => {
   const sourceId = Number(req.body.sourceId);
+  if (!listSources(db).find(s => s.id === sourceId)) {
+    return res.status(400).send('출처를 선택하거나 새로 추가해주세요.');
+  }
   const hasHeader = req.body.hasHeader === 'on';
   const pastedText = req.body.pastedText;
 
