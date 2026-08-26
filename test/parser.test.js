@@ -53,3 +53,19 @@ test('applyMapping maps columns by role, skips header, flags bad rows', () => {
   assert.strictEqual(errors.length, 1);
   assert.strictEqual(errors[0].reason, 'invalid date');
 });
+
+test('applyMapping gives distinct raw_hash to identical same-day rows (two coffees, same place, same amount)', () => {
+  const grid = [
+    ['2026.08.01', '스타벅스', '5,000'],
+    ['2026.08.01', '스타벅스', '5,000'],
+  ];
+  const { rows, errors } = applyMapping(grid, ['date', 'description', 'amount'], 1, false);
+
+  assert.strictEqual(errors.length, 0);
+  assert.strictEqual(rows.length, 2);
+  assert.notStrictEqual(rows[0].raw_hash, rows[1].raw_hash);
+  // re-pasting the exact same batch later should still hash identically, so it dedupes
+  const again = applyMapping(grid, ['date', 'description', 'amount'], 1, false).rows;
+  assert.strictEqual(again[0].raw_hash, rows[0].raw_hash);
+  assert.strictEqual(again[1].raw_hash, rows[1].raw_hash);
+});

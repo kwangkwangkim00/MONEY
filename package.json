@@ -12,6 +12,9 @@
   },
   "keywords": [],
   "type": "commonjs",
+  "engines": {
+    "node": ">=22"
+  },
   "dependencies": {
     "better-sqlite3": "^13.0.3",
     "ejs": "^6.0.1",

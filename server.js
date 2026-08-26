@@ -46,7 +46,8 @@ app.post('/import/preview', (req, res) => {
   const { sourceId, newSourceName, newSourceType, pastedText, hasHeader } = req.body;
   let resolvedSourceId = Number(sourceId);
   if (!resolvedSourceId && newSourceName) {
-    resolvedSourceId = createSource(db, newSourceName, newSourceType || 'card');
+    resolvedSourceId = listSources(db).find(s => s.name === newSourceName)?.id
+      || createSource(db, newSourceName, newSourceType || 'card');
   }
   const source = listSources(db).find(s => s.id === resolvedSourceId);
   if (!source) {
