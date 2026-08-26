@@ -1,0 +1,20 @@
+{
+  "name": "household-finance-dashboard",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test"
+  },
+  "keywords": [],
+  "type": "commonjs",
+  "dependencies": {
+    "better-sqlite3": "^13.0.3",
+    "ejs": "^6.0.1",
+    "express": "^5.2.1"
+  }
+}
